@@ -142,8 +142,10 @@ body {
   width: 72px;
   height: 72px;
   object-fit: cover;
+  object-position: center top;
   display: block;
   border-radius: 1px;
+  margin: 0 auto;
 }
 
 .polaroid-caption {
