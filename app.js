@@ -307,12 +307,12 @@ function spinWheel() {
   // But rotation goes clockwise when positive, and we're at currentAngle
   // Target: currentAngle + extraSpins * 2PI + offset to land on winning slot
   const extraSpins = 5 + Math.floor(Math.random() * 3); // 5-7 extra full spins
-  // The pointer is at top, which in our rotated canvas is at angle -PI/2 (or 3PI/2)
-  // We want the slot at winningIndex to be at the top
-  // Top in canvas = -PI/2, so we need: rotation + slotCenter = -PI/2 + 2kPI
-  // rotation = -PI/2 - slotCenter + 2kPI
-  const targetAngle = -Math.PI / 2 - slotCenter + extraSpins * 2 * Math.PI;
-  const totalRotation = targetAngle - currentAngle;
+  // Calculate the minimum positive rotation from the current angle to land on the winning slot
+  // We need: (currentAngle + totalRotation) + slotCenter ≡ -PI/2 (mod 2PI)
+  let neededRotation = (-Math.PI / 2 - slotCenter - currentAngle) % (2 * Math.PI);
+  if (neededRotation <= 0) neededRotation += 2 * Math.PI;
+  // Add extra full spins so every spin looks equally dramatic
+  const totalRotation = neededRotation + extraSpins * 2 * Math.PI;
 
   const duration = 4000 + Math.random() * 1000;
   const startTime = performance.now();
