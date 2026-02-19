@@ -1,3 +1,27 @@
+// ===== Photo Configuration =====
+// Drop your photos in the images/ folder with these filenames:
+// - couple1.jpg   (you and Margaux together)
+// - couple2.jpg   (you and Margaux together, alternate)
+// - mia1.jpg      (Mia the dog)
+// - mia2.jpg      (Mia the dog, alternate)
+// - family.jpg    (all three of you)
+const PHOTOS = {
+  couple1: 'images/couple1.jpg',
+  couple2: 'images/couple2.jpg',
+  mia1: 'images/mia1.jpg',
+  mia2: 'images/mia2.jpg',
+  family: 'images/family.jpg',
+};
+
+// Gallery photos for the landing screen (rotated polaroids)
+const GALLERY_PHOTOS = [
+  { src: PHOTOS.couple1, caption: 'Sam & Margaux', rotate: -6 },
+  { src: PHOTOS.mia1, caption: 'Mia', rotate: 4 },
+  { src: PHOTOS.couple2, caption: 'Us', rotate: -3 },
+  { src: PHOTOS.mia2, caption: 'Good girl', rotate: 5 },
+  { src: PHOTOS.family, caption: 'The fam', rotate: -2 },
+];
+
 // ===== Prize Configuration =====
 // weight = how many slots on the wheel (higher = more common)
 const PRIZES = [
@@ -6,6 +30,7 @@ const PRIZES = [
     name: 'Hug from Mia',
     emoji: '🐶',
     description: 'One enthusiastic, tail-wagging hug delivered by Mia herself.',
+    photo: PHOTOS.mia1,
     color: '#f8c9a0',
     textColor: '#5a3e28',
     weight: 3,
@@ -16,6 +41,7 @@ const PRIZES = [
     name: 'Only Compliments from Sam for 24 Hours',
     emoji: '🥰',
     description: 'Sam can only say nice things to you for a full 24 hours. No sarcasm allowed.',
+    photo: PHOTOS.couple1,
     color: '#f4a0b5',
     textColor: '#5a2035',
     weight: 2,
@@ -26,6 +52,7 @@ const PRIZES = [
     name: 'Sam Mute Button',
     emoji: '🔇',
     description: 'Activate at any time. Sam must be silent for 1 hour. No commentary, no opinions.',
+    photo: PHOTOS.couple2,
     color: '#d8c4e9',
     textColor: '#3d2860',
     weight: 2,
@@ -36,6 +63,7 @@ const PRIZES = [
     name: 'Dinner Date',
     emoji: '🍷',
     description: 'A proper dinner date. Sam plans everything - restaurant, outfit, the whole thing.',
+    photo: PHOTOS.couple1,
     color: '#e8607a',
     textColor: '#ffffff',
     weight: 1,
@@ -46,6 +74,7 @@ const PRIZES = [
     name: 'Sam Cooks You Dinner',
     emoji: '👨‍🍳',
     description: 'Sam makes you dinner from scratch. You pick the meal, he does all the work.',
+    photo: PHOTOS.family,
     color: '#b8d4c8',
     textColor: '#2a4a3e',
     weight: 2,
@@ -56,26 +85,29 @@ const PRIZES = [
     name: 'Sam Does Whatever You Say',
     emoji: '👑',
     description: 'For a full day, Sam does whatever you tell him. No questions asked. No complaints.',
+    photo: PHOTOS.couple2,
     color: '#d4a853',
     textColor: '#3d2c10',
     weight: 1,
     tier: 'legendary'
   },
   {
-    id: 'movie-pick',
-    name: 'You Pick the Movie (No Vetoes)',
-    emoji: '🎬',
-    description: 'Movie night your way. Sam watches whatever you choose with zero complaints.',
+    id: 'sam-flowers',
+    name: 'Sam Buys You Flowers',
+    emoji: '💐',
+    description: 'A beautiful bouquet, hand-picked by Sam. No occasion needed.',
+    photo: PHOTOS.couple1,
     color: '#a0c4f4',
     textColor: '#1e3a5f',
     weight: 2,
     tier: 'common'
   },
   {
-    id: 'breakfast-bed',
-    name: 'Breakfast in Bed',
-    emoji: '🥞',
-    description: 'Sam brings you breakfast in bed. Pancakes, coffee, the works.',
+    id: 'eggs-special',
+    name: 'Sam Makes You Eggs Extra Special',
+    emoji: '🍳',
+    description: 'Sam makes you his finest eggs — your way, with all the fixings. Morning luxury.',
+    photo: PHOTOS.mia2,
     color: '#f5e6c8',
     textColor: '#5a4520',
     weight: 2,
@@ -319,6 +351,17 @@ function showPrizeReveal(prize) {
   document.getElementById('prize-emoji').textContent = prize.emoji;
   document.getElementById('prize-title').textContent = prize.name;
   document.getElementById('prize-desc').textContent = prize.description;
+
+  // Show prize photo
+  const photoEl = document.getElementById('prize-photo');
+  if (prize.photo) {
+    photoEl.src = prize.photo;
+    photoEl.style.display = 'block';
+    photoEl.onerror = () => { photoEl.style.display = 'none'; };
+  } else {
+    photoEl.style.display = 'none';
+  }
+
   createSparkles('prize-sparkles', 20);
   fireConfetti();
   showScreen('prize');
@@ -328,6 +371,17 @@ function showPrizeReveal(prize) {
 function showCertificate(prize) {
   document.getElementById('cert-prize').textContent = prize.name;
   document.getElementById('cert-emoji').textContent = prize.emoji;
+
+  // Show certificate photo
+  const certPhoto = document.getElementById('cert-photo');
+  if (prize.photo) {
+    certPhoto.src = prize.photo;
+    certPhoto.style.display = 'block';
+    certPhoto.onerror = () => { certPhoto.style.display = 'none'; };
+  } else {
+    certPhoto.style.display = 'none';
+  }
+
   // Generate a cute little code
   const code = 'MARGAUX-' + prize.id.toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
   document.getElementById('cert-code').textContent = code;
@@ -428,6 +482,25 @@ window.addEventListener('resize', () => {
     drawWheel(currentAngle);
   }
 });
+
+// ===== Init Landing Photo Gallery =====
+function buildPhotoGallery() {
+  const gallery = document.getElementById('photo-gallery');
+  if (!gallery) return;
+
+  GALLERY_PHOTOS.forEach((photo, i) => {
+    const polaroid = document.createElement('div');
+    polaroid.className = 'polaroid';
+    polaroid.style.setProperty('--rotate', photo.rotate + 'deg');
+    polaroid.style.animationDelay = (i * 0.15) + 's';
+    polaroid.innerHTML = `
+      <img src="${photo.src}" alt="${photo.caption}" onerror="this.parentElement.style.display='none'">
+      <span class="polaroid-caption">${photo.caption}</span>
+    `;
+    gallery.appendChild(polaroid);
+  });
+}
+buildPhotoGallery();
 
 // ===== Init Landing Sparkles =====
 createSparkles('landing-sparkles', 20);
