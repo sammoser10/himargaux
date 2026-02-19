@@ -1,25 +1,25 @@
 // ===== Photo Configuration =====
 // Drop your photos in the images/ folder with these filenames:
-// - couple1.jpg   (you and Margaux together)
-// - couple2.jpg   (you and Margaux together, alternate)
-// - mia1.jpg      (Mia the dog)
-// - mia2.jpg      (Mia the dog, alternate)
-// - family.jpg    (all three of you)
+// - margaux-mia1.jpg  (Margaux and Mia together)
+// - margaux-mia2.jpg  (Margaux and Mia together, alternate)
+// - margaux-mia3.jpg  (Margaux and Mia together, third)
+// - flowers.jpg       (bouquet of flowers)
+// - couple.jpg        (Sam and Margaux together)
 const PHOTOS = {
-  couple1: 'images/couple1.jpg',
-  couple2: 'images/couple2.jpg',
-  mia1: 'images/mia1.jpg',
-  mia2: 'images/mia2.jpg',
-  family: 'images/family.jpg',
+  margauxMia1: 'images/margaux-mia1.jpg',
+  margauxMia2: 'images/margaux-mia2.jpg',
+  margauxMia3: 'images/margaux-mia3.jpg',
+  flowers: 'images/flowers.jpg',
+  couple: 'images/couple.jpg',
 };
 
 // Gallery photos for the landing screen (rotated polaroids)
 const GALLERY_PHOTOS = [
-  { src: PHOTOS.couple1, caption: 'Sam & Margaux', rotate: -6 },
-  { src: PHOTOS.mia1, caption: 'Mia', rotate: 4 },
-  { src: PHOTOS.couple2, caption: 'Us', rotate: -3 },
-  { src: PHOTOS.mia2, caption: 'Good girl', rotate: 5 },
-  { src: PHOTOS.family, caption: 'The fam', rotate: -2 },
+  { src: PHOTOS.margauxMia1, caption: 'Margaux & Mia', rotate: -6 },
+  { src: PHOTOS.couple, caption: 'Sam & Margaux', rotate: 4 },
+  { src: PHOTOS.margauxMia2, caption: 'Best friends', rotate: -3 },
+  { src: PHOTOS.flowers, caption: 'For you', rotate: 5 },
+  { src: PHOTOS.margauxMia3, caption: 'The girls', rotate: -2 },
 ];
 
 // ===== Prize Configuration =====
@@ -30,7 +30,7 @@ const PRIZES = [
     name: 'Hug from Mia',
     emoji: '🐶',
     description: 'One enthusiastic, tail-wagging hug delivered by Mia herself.',
-    photo: PHOTOS.mia1,
+    photo: PHOTOS.margauxMia1,
     color: '#f8c9a0',
     textColor: '#5a3e28',
     weight: 3,
@@ -41,7 +41,7 @@ const PRIZES = [
     name: 'Only Compliments from Sam for 24 Hours',
     emoji: '🥰',
     description: 'Sam can only say nice things to you for a full 24 hours. No sarcasm allowed.',
-    photo: PHOTOS.couple1,
+    photo: PHOTOS.couple,
     color: '#f4a0b5',
     textColor: '#5a2035',
     weight: 2,
@@ -52,7 +52,7 @@ const PRIZES = [
     name: 'Sam Mute Button',
     emoji: '🔇',
     description: 'Activate at any time. Sam must be silent for 1 hour. No commentary, no opinions.',
-    photo: PHOTOS.couple2,
+    photo: PHOTOS.margauxMia2,
     color: '#d8c4e9',
     textColor: '#3d2860',
     weight: 2,
@@ -63,7 +63,7 @@ const PRIZES = [
     name: 'Dinner Date',
     emoji: '🍷',
     description: 'A proper dinner date. Sam plans everything - restaurant, outfit, the whole thing.',
-    photo: PHOTOS.couple1,
+    photo: PHOTOS.couple,
     color: '#e8607a',
     textColor: '#ffffff',
     weight: 1,
@@ -74,7 +74,7 @@ const PRIZES = [
     name: 'Sam Cooks You Dinner',
     emoji: '👨‍🍳',
     description: 'Sam makes you dinner from scratch. You pick the meal, he does all the work.',
-    photo: PHOTOS.family,
+    photo: PHOTOS.margauxMia3,
     color: '#b8d4c8',
     textColor: '#2a4a3e',
     weight: 2,
@@ -85,7 +85,7 @@ const PRIZES = [
     name: 'Sam Does Whatever You Say',
     emoji: '👑',
     description: 'For a full day, Sam does whatever you tell him. No questions asked. No complaints.',
-    photo: PHOTOS.couple2,
+    photo: PHOTOS.couple,
     color: '#d4a853',
     textColor: '#3d2c10',
     weight: 1,
@@ -96,7 +96,7 @@ const PRIZES = [
     name: 'Sam Buys You Flowers',
     emoji: '💐',
     description: 'A beautiful bouquet, hand-picked by Sam. No occasion needed.',
-    photo: PHOTOS.couple1,
+    photo: PHOTOS.flowers,
     color: '#a0c4f4',
     textColor: '#1e3a5f',
     weight: 2,
@@ -107,7 +107,7 @@ const PRIZES = [
     name: 'Sam Makes You Eggs Extra Special',
     emoji: '🍳',
     description: 'Sam makes you his finest eggs — your way, with all the fixings. Morning luxury.',
-    photo: PHOTOS.mia2,
+    photo: PHOTOS.margauxMia1,
     color: '#f5e6c8',
     textColor: '#5a4520',
     weight: 2,
