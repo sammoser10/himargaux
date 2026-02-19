@@ -122,6 +122,25 @@ let isSpinning = false;
 let wheelSlots = [];
 let currentAngle = 0;
 
+// ===== LocalStorage Persistence =====
+function saveState() {
+  localStorage.setItem('margaux-spins', JSON.stringify({
+    spinsLeft,
+    wonPrizeIds: wonPrizes.map(p => p.id),
+  }));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('margaux-spins');
+  if (!saved) return;
+  try {
+    const state = JSON.parse(saved);
+    spinsLeft = state.spinsLeft;
+    wonPrizes = state.wonPrizeIds.map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
+  } catch (e) {}
+}
+loadState();
+
 // ===== DOM Elements =====
 const screens = {
   landing: document.getElementById('landing-screen'),
@@ -321,6 +340,7 @@ function spinWheel() {
 
       const wonPrize = wheelSlots[winningIndex];
       wonPrizes.push(wonPrize);
+      saveState();
 
       spinBtn.classList.remove('spinning');
 
@@ -432,9 +452,15 @@ function showFinalResults() {
 
 // ===== Event Listeners =====
 document.getElementById('start-btn').addEventListener('click', () => {
-  showScreen('game');
-  buildWheelSlots();
-  drawWheel(currentAngle);
+  if (spinsLeft <= 0 && wonPrizes.length > 0) {
+    showFinalResults();
+  } else {
+    showScreen('game');
+    buildWheelSlots();
+    updateSpinDots();
+    updatePrizeList();
+    drawWheel(currentAngle);
+  }
 });
 
 document.getElementById('spin-btn').addEventListener('click', spinWheel);
@@ -502,5 +528,22 @@ function buildPhotoGallery() {
 }
 buildPhotoGallery();
 
+// Update landing page to reflect saved state
+if (spinsLeft < 3 && spinsLeft > 0) {
+  document.querySelector('.greeting-sub').innerHTML = `You have <strong>${spinsLeft} spin${spinsLeft === 1 ? '' : 's'}</strong> left on the reward wheel`;
+} else if (spinsLeft <= 0) {
+  document.querySelector('.greeting-sub').textContent = "You've used all your spins!";
+  document.getElementById('start-btn').textContent = 'See My Prizes';
+}
+
 // ===== Init Landing Sparkles =====
 createSparkles('landing-sparkles', 20);
+
+// ===== Easter Egg: Click the "n" in "something" to reset spins =====
+document.getElementById('reset-egg').addEventListener('click', () => {
+  spinsLeft = 3;
+  wonPrizes = [];
+  saveState();
+  // Update the landing page text to reflect fresh spins
+  document.querySelector('.greeting-sub').innerHTML = "You've been gifted <strong>3 spins</strong> on the reward wheel";
+});
