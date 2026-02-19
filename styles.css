@@ -1,0 +1,661 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --pink: #f4a0b5;
+  --pink-light: #fce4ec;
+  --pink-dark: #e0728a;
+  --rose: #e8607a;
+  --blush: #fff0f3;
+  --cream: #fefaf6;
+  --gold: #d4a853;
+  --gold-light: #f5e6c8;
+  --lavender: #d8c4e9;
+  --lavender-light: #f0e6fa;
+  --sage: #b8d4c8;
+  --sage-light: #e2f0e8;
+  --peach: #f8c9a0;
+  --peach-light: #fde8d4;
+  --text: #3d2c35;
+  --text-light: #7a6670;
+  --white: #ffffff;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== Screens ===== */
+.screen {
+  display: none;
+  min-height: 100vh;
+  position: relative;
+}
+
+.screen.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Landing Screen ===== */
+.landing-content {
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  max-width: 480px;
+}
+
+.greeting-pre {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-light);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.greeting-name {
+  font-family: 'Sacramento', cursive;
+  font-size: 5rem;
+  color: var(--rose);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.greeting-sub {
+  font-size: 1.15rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.greeting-sub strong {
+  color: var(--rose);
+  font-weight: 600;
+}
+
+.greeting-note {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 2.5rem;
+  font-style: italic;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), var(--rose));
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(232, 96, 122, 0.3);
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(232, 96, 122, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--rose);
+  border: 2px solid var(--pink-light);
+  padding: 0.85rem 2rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--pink-light);
+  border-color: var(--pink);
+}
+
+/* ===== Game Screen ===== */
+#game-screen {
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+}
+
+.game-title {
+  font-family: 'Sacramento', cursive;
+  font-size: 2rem;
+  color: var(--rose);
+}
+
+.spins-remaining {
+  text-align: right;
+}
+
+.spins-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.spins-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.spin-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--pink-light);
+  border: 2px solid var(--pink);
+  transition: all 0.3s ease;
+}
+
+.spin-dot.active {
+  background: var(--pink);
+  box-shadow: 0 0 8px rgba(244, 160, 181, 0.5);
+}
+
+.spin-dot.used {
+  background: var(--pink-light);
+  border-color: #ddd;
+  opacity: 0.4;
+}
+
+/* ===== Wheel ===== */
+.wheel-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.wheel-container {
+  position: relative;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1), 0 0 0 8px var(--white), 0 0 0 12px var(--pink-light);
+  overflow: hidden;
+}
+
+.wheel-container canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.wheel-pointer {
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 30px solid var(--rose);
+  position: absolute;
+  top: calc(50% - 170px - 22px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Position pointer relative to wheel area */
+.wheel-area {
+  position: relative;
+}
+
+.wheel-area .wheel-pointer {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  margin-bottom: -8px;
+}
+
+.btn-spin {
+  background: linear-gradient(135deg, var(--gold), #c49340);
+  color: white;
+  border: none;
+  padding: 0.9rem 3rem;
+  font-size: 1.2rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(212, 168, 83, 0.4);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.btn-spin:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 25px rgba(212, 168, 83, 0.5);
+}
+
+.btn-spin:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-spin.spinning {
+  animation: pulse 0.5s ease infinite alternate;
+}
+
+@keyframes pulse {
+  from { box-shadow: 0 4px 20px rgba(212, 168, 83, 0.4); }
+  to { box-shadow: 0 4px 30px rgba(212, 168, 83, 0.7); }
+}
+
+/* ===== Prizes Collected (bottom of game screen) ===== */
+.prizes-collected {
+  width: 100%;
+  max-width: 420px;
+  display: none;
+}
+
+.prizes-collected.has-prizes {
+  display: block;
+}
+
+.prizes-collected h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.prize-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.prize-chip {
+  background: var(--white);
+  border: 1px solid var(--pink-light);
+  border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.prize-chip:hover {
+  background: var(--pink-light);
+  border-color: var(--pink);
+}
+
+/* ===== Prize Reveal Screen ===== */
+.prize-reveal {
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  max-width: 420px;
+}
+
+.prize-congrats {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.prize-card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 2px solid var(--pink-light);
+  animation: cardReveal 0.6s ease;
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotateY(20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotateY(0);
+  }
+}
+
+.prize-emoji {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.prize-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.prize-desc {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+/* ===== Certificate Screen ===== */
+.certificate-view {
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.certificate {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 6px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.certificate-border {
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.certificate-inner {
+  border: 1px dashed var(--gold-light);
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--white) 0%, var(--blush) 50%, var(--white) 100%);
+}
+
+.cert-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.85rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.cert-presented {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 0.25rem;
+}
+
+.cert-name {
+  font-family: 'Sacramento', cursive;
+  font-size: 3.5rem;
+  color: var(--rose);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.cert-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 1rem auto;
+}
+
+.cert-for {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.cert-prize {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.cert-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.cert-footer {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.cert-signed {
+  font-family: 'Sacramento', cursive;
+  font-size: 1.5rem;
+  color: var(--rose);
+  margin-bottom: 0.5rem;
+}
+
+.cert-code {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  color: #ccc;
+  letter-spacing: 0.1em;
+}
+
+.cert-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ===== Done Screen ===== */
+.done-content {
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+}
+
+.done-title {
+  font-family: 'Sacramento', cursive;
+  font-size: 3.5rem;
+  color: var(--rose);
+  margin-bottom: 0.5rem;
+}
+
+.done-sub {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+
+.final-prizes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.final-prize-card {
+  background: var(--white);
+  border: 1px solid var(--pink-light);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.final-prize-card:hover {
+  border-color: var(--pink);
+  box-shadow: 0 4px 15px rgba(244, 160, 181, 0.2);
+}
+
+.final-prize-card .fp-emoji {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.final-prize-card .fp-info h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+
+.final-prize-card .fp-info p {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+.done-note {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.done-love {
+  font-family: 'Sacramento', cursive;
+  font-size: 1.5rem;
+  color: var(--rose);
+}
+
+/* ===== Sparkles ===== */
+.sparkle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Confetti ===== */
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  z-index: 1000;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 420px) {
+  .greeting-name {
+    font-size: 3.8rem;
+  }
+
+  .wheel-container {
+    width: 290px;
+    height: 290px;
+  }
+
+  .certificate-inner {
+    padding: 1.5rem 1rem;
+  }
+
+  .cert-name {
+    font-size: 2.8rem;
+  }
+
+  .prize-emoji {
+    font-size: 3rem;
+  }
+
+  .prize-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .wheel-container {
+    width: 380px;
+    height: 380px;
+  }
+}
+
+/* ===== Utility ===== */
+.hidden {
+  display: none !important;
+}

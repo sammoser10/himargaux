@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hi Margaux!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💝</text></svg>">
+</head>
+<body>
+  <!-- Landing Screen -->
+  <div id="landing-screen" class="screen active">
+    <div class="landing-content">
+      <div class="sparkle-container" id="landing-sparkles"></div>
+      <p class="greeting-pre">a little something for</p>
+      <h1 class="greeting-name">Margaux</h1>
+      <p class="greeting-sub">You've been gifted <strong>3 spins</strong> on the reward wheel</p>
+      <p class="greeting-note">Each spin is a little surprise from Sam & Mia</p>
+      <button class="btn-primary" id="start-btn">Open My Gift</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen">
+    <header class="game-header">
+      <h2 class="game-title">Hi Margaux</h2>
+      <div class="spins-remaining">
+        <span class="spins-label">Spins left</span>
+        <div class="spins-dots" id="spins-dots">
+          <span class="spin-dot active"></span>
+          <span class="spin-dot active"></span>
+          <span class="spin-dot active"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wheel-area">
+      <div class="wheel-pointer"></div>
+      <div class="wheel-container">
+        <canvas id="wheel-canvas" width="380" height="380"></canvas>
+      </div>
+      <button class="btn-spin" id="spin-btn">Spin!</button>
+    </div>
+
+    <div class="prizes-collected" id="prizes-collected">
+      <h3>Your Prizes</h3>
+      <div class="prize-list" id="prize-list"></div>
+    </div>
+  </div>
+
+  <!-- Prize Reveal Screen -->
+  <div id="prize-screen" class="screen">
+    <div class="prize-reveal">
+      <div class="sparkle-container" id="prize-sparkles"></div>
+      <p class="prize-congrats">You got...</p>
+      <div class="prize-card" id="prize-card">
+        <div class="prize-card-inner">
+          <div class="prize-emoji" id="prize-emoji"></div>
+          <h2 class="prize-title" id="prize-title"></h2>
+          <p class="prize-desc" id="prize-desc"></p>
+        </div>
+      </div>
+      <button class="btn-primary" id="collect-btn">Collect Prize</button>
+    </div>
+  </div>
+
+  <!-- Certificate Screen -->
+  <div id="certificate-screen" class="screen">
+    <div class="certificate-view">
+      <div class="certificate" id="certificate">
+        <div class="certificate-border">
+          <div class="certificate-inner">
+            <p class="cert-header">~ Certificate of Reward ~</p>
+            <p class="cert-presented">Presented to</p>
+            <h2 class="cert-name">Margaux</h2>
+            <div class="cert-divider"></div>
+            <p class="cert-for">This certificate entitles you to</p>
+            <h3 class="cert-prize" id="cert-prize"></h3>
+            <p class="cert-emoji" id="cert-emoji"></p>
+            <div class="cert-divider"></div>
+            <p class="cert-footer">Redeemable at any time, no expiration</p>
+            <p class="cert-signed">With love, Sam & Mia</p>
+            <p class="cert-code" id="cert-code"></p>
+          </div>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <button class="btn-secondary" id="save-cert-btn">Save Screenshot</button>
+        <button class="btn-primary" id="back-to-game-btn">Back to Wheel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Done Screen -->
+  <div id="done-screen" class="screen">
+    <div class="done-content">
+      <div class="sparkle-container" id="done-sparkles"></div>
+      <h1 class="done-title">All Spins Used!</h1>
+      <p class="done-sub">Here's what you won, babe:</p>
+      <div class="final-prizes" id="final-prizes"></div>
+      <p class="done-note">Each prize is redeemable anytime. Just show Sam the certificate and he has to comply. No questions asked.</p>
+      <p class="done-love">Made with love by Sam & Mia</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
