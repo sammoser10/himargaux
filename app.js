@@ -143,6 +143,7 @@ loadState();
 
 // ===== DOM Elements =====
 const screens = {
+  password: document.getElementById('password-screen'),
   landing: document.getElementById('landing-screen'),
   game: document.getElementById('game-screen'),
   prize: document.getElementById('prize-screen'),
@@ -536,8 +537,39 @@ if (spinsLeft < 3 && spinsLeft > 0) {
   document.getElementById('start-btn').textContent = 'See My Prizes';
 }
 
-// ===== Init Landing Sparkles =====
-createSparkles('landing-sparkles', 20);
+// ===== Password Screen =====
+const SECRET = 'ilovemia';
+const passwordInput = document.getElementById('password-input');
+const passwordBtn = document.getElementById('password-btn');
+const passwordError = document.getElementById('password-error');
+const passwordHeart = document.getElementById('password-heart');
+
+function checkPassword() {
+  const value = passwordInput.value.trim().toLowerCase().replace(/\s+/g, '');
+  if (value === SECRET) {
+    passwordHeart.classList.add('correct');
+    passwordError.classList.remove('visible');
+    setTimeout(() => {
+      showScreen('landing');
+      createSparkles('landing-sparkles', 20);
+    }, 300);
+  } else {
+    passwordInput.classList.add('shake');
+    passwordError.classList.add('visible');
+    setTimeout(() => passwordInput.classList.remove('shake'), 400);
+  }
+}
+
+passwordBtn.addEventListener('click', checkPassword);
+passwordInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkPassword();
+});
+passwordInput.addEventListener('input', () => {
+  passwordError.classList.remove('visible');
+});
+
+// ===== Init Password Sparkles =====
+createSparkles('password-sparkles', 15);
 
 // ===== Easter Egg: Click the "n" in "something" to reset spins =====
 document.getElementById('reset-egg').addEventListener('click', () => {

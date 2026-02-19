@@ -11,8 +11,24 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💝</text></svg>">
 </head>
 <body>
+  <!-- Password Screen -->
+  <div id="password-screen" class="screen active">
+    <div class="password-content">
+      <div class="sparkle-container" id="password-sparkles"></div>
+      <div class="lock-icon">💝</div>
+      <h1 class="password-title">This is for you</h1>
+      <p class="password-hint">Psst... what's the magic word?</p>
+      <div class="password-input-wrap">
+        <input type="text" id="password-input" class="password-input" placeholder="enter the secret password" autocomplete="off" autofocus>
+        <div class="password-heart" id="password-heart">&#10084;</div>
+      </div>
+      <p class="password-error" id="password-error">hmm, that's not it... try again!</p>
+      <button class="btn-primary" id="password-btn">Enter</button>
+    </div>
+  </div>
+
   <!-- Landing Screen -->
-  <div id="landing-screen" class="screen active">
+  <div id="landing-screen" class="screen">
     <div class="landing-content">
       <div class="sparkle-container" id="landing-sparkles"></div>
       <div class="photo-gallery" id="photo-gallery"></div>

@@ -57,6 +57,114 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ===== Password Screen ===== */
+.password-content {
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  max-width: 380px;
+  width: 100%;
+}
+
+.lock-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  animation: floatHeart 2s ease-in-out infinite;
+}
+
+@keyframes floatHeart {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.password-title {
+  font-family: 'Sacramento', cursive;
+  font-size: 3.5rem;
+  color: var(--rose);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.password-hint {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.password-input-wrap {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.password-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  border: 2px solid var(--pink-light);
+  border-radius: 50px;
+  background: var(--white);
+  color: var(--text);
+  text-align: center;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.password-input::placeholder {
+  color: #cbb8c0;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.password-input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(244, 160, 181, 0.15);
+}
+
+.password-input.shake {
+  animation: shake 0.4s ease;
+  border-color: var(--rose);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.password-heart {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--pink-light);
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.password-heart.correct {
+  color: var(--rose);
+  transform: translateY(-50%) scale(1.3);
+}
+
+.password-error {
+  font-size: 0.85rem;
+  color: var(--rose);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  min-height: 1.3em;
+}
+
+.password-error.visible {
+  opacity: 1;
+}
+
 /* ===== Landing Screen ===== */
 .landing-content {
   text-align: center;
