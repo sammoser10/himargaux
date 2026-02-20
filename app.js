@@ -122,15 +122,58 @@ let isSpinning = false;
 let wheelSlots = [];
 let currentAngle = 0;
 
-// ===== LocalStorage Persistence =====
-function saveState() {
+// ===== Supabase Setup =====
+const SUPABASE_URL = 'https://olcrqwjxgqcmdbljutbr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sY3Jxd2p4Z3FjbWRibGp1dGJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDQwMDMsImV4cCI6MjA4NzEyMDAwM30.23PBwPF0yap5vmU9x6sD0JFWd-kLtiHRcRGB3F0DCsI';
+const GAME_STATE_ID = 'margaux';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ===== State Persistence (Supabase + localStorage fallback) =====
+async function saveState() {
+  // Always save to localStorage as immediate fallback
   localStorage.setItem('margaux-spins', JSON.stringify({
     spinsLeft,
     wonPrizeIds: wonPrizes.map(p => p.id),
   }));
+
+  // Sync to Supabase
+  try {
+    await supabase.from('game_state').upsert({
+      id: GAME_STATE_ID,
+      spins_left: spinsLeft,
+      won_prize_ids: wonPrizes.map(p => p.id),
+      updated_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.warn('Supabase save failed, localStorage used as fallback', e);
+  }
 }
 
-function loadState() {
+async function loadState() {
+  // Try Supabase first
+  try {
+    const { data, error } = await supabase
+      .from('game_state')
+      .select('*')
+      .eq('id', GAME_STATE_ID)
+      .single();
+
+    if (data && !error) {
+      spinsLeft = data.spins_left;
+      wonPrizes = (data.won_prize_ids || []).map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
+      // Keep localStorage in sync
+      localStorage.setItem('margaux-spins', JSON.stringify({
+        spinsLeft,
+        wonPrizeIds: wonPrizes.map(p => p.id),
+      }));
+      return;
+    }
+  } catch (e) {
+    console.warn('Supabase load failed, falling back to localStorage', e);
+  }
+
+  // Fallback to localStorage
   const saved = localStorage.getItem('margaux-spins');
   if (!saved) return;
   try {
@@ -139,7 +182,26 @@ function loadState() {
     wonPrizes = state.wonPrizeIds.map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
   } catch (e) {}
 }
-loadState();
+
+// ===== Async Init =====
+// Load state then update the UI once ready
+async function initApp() {
+  await loadState();
+  updateLandingText();
+  buildPhotoGallery();
+  createSparkles('password-sparkles', 15);
+}
+
+function updateLandingText() {
+  if (spinsLeft < 3 && spinsLeft > 0) {
+    document.querySelector('.greeting-sub').innerHTML = `You have <strong>${spinsLeft} spin${spinsLeft === 1 ? '' : 's'}</strong> left on the reward wheel`;
+  } else if (spinsLeft <= 0) {
+    document.querySelector('.greeting-sub').textContent = "You've used all your spins!";
+    document.getElementById('start-btn').textContent = 'See My Prizes';
+  }
+}
+
+initApp();
 
 // ===== DOM Elements =====
 const screens = {
@@ -527,15 +589,6 @@ function buildPhotoGallery() {
     gallery.appendChild(polaroid);
   });
 }
-buildPhotoGallery();
-
-// Update landing page to reflect saved state
-if (spinsLeft < 3 && spinsLeft > 0) {
-  document.querySelector('.greeting-sub').innerHTML = `You have <strong>${spinsLeft} spin${spinsLeft === 1 ? '' : 's'}</strong> left on the reward wheel`;
-} else if (spinsLeft <= 0) {
-  document.querySelector('.greeting-sub').textContent = "You've used all your spins!";
-  document.getElementById('start-btn').textContent = 'See My Prizes';
-}
 
 // ===== Password Screen =====
 const SECRET = 'ilovemia';
@@ -567,9 +620,6 @@ passwordInput.addEventListener('keydown', (e) => {
 passwordInput.addEventListener('input', () => {
   passwordError.classList.remove('visible');
 });
-
-// ===== Init Password Sparkles =====
-createSparkles('password-sparkles', 15);
 
 // ===== Easter Egg: Click the "n" in "something" to reset spins =====
 document.getElementById('reset-egg').addEventListener('click', () => {
