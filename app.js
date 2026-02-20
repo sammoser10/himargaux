@@ -127,7 +127,12 @@ const SUPABASE_URL = 'https://olcrqwjxgqcmdbljutbr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sY3Jxd2p4Z3FjbWRibGp1dGJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDQwMDMsImV4cCI6MjA4NzEyMDAwM30.23PBwPF0yap5vmU9x6sD0JFWd-kLtiHRcRGB3F0DCsI';
 const GAME_STATE_ID = 'margaux';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let db = null;
+try {
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch (e) {
+  console.warn('Supabase client failed to init, using localStorage only', e);
+}
 
 // ===== State Persistence (Supabase + localStorage fallback) =====
 async function saveState() {
@@ -138,8 +143,9 @@ async function saveState() {
   }));
 
   // Sync to Supabase
+  if (!db) return;
   try {
-    await supabase.from('game_state').upsert({
+    await db.from('game_state').upsert({
       id: GAME_STATE_ID,
       spins_left: spinsLeft,
       won_prize_ids: wonPrizes.map(p => p.id),
@@ -152,25 +158,27 @@ async function saveState() {
 
 async function loadState() {
   // Try Supabase first
-  try {
-    const { data, error } = await supabase
-      .from('game_state')
-      .select('*')
-      .eq('id', GAME_STATE_ID)
-      .single();
+  if (db) {
+    try {
+      const { data, error } = await db
+        .from('game_state')
+        .select('*')
+        .eq('id', GAME_STATE_ID)
+        .single();
 
-    if (data && !error) {
-      spinsLeft = data.spins_left;
-      wonPrizes = (data.won_prize_ids || []).map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
-      // Keep localStorage in sync
-      localStorage.setItem('margaux-spins', JSON.stringify({
-        spinsLeft,
-        wonPrizeIds: wonPrizes.map(p => p.id),
-      }));
-      return;
+      if (data && !error) {
+        spinsLeft = data.spins_left;
+        wonPrizes = (data.won_prize_ids || []).map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
+        // Keep localStorage in sync
+        localStorage.setItem('margaux-spins', JSON.stringify({
+          spinsLeft,
+          wonPrizeIds: wonPrizes.map(p => p.id),
+        }));
+        return;
+      }
+    } catch (e) {
+      console.warn('Supabase load failed, falling back to localStorage', e);
     }
-  } catch (e) {
-    console.warn('Supabase load failed, falling back to localStorage', e);
   }
 
   // Fallback to localStorage
