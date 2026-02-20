@@ -122,17 +122,16 @@ let isSpinning = false;
 let wheelSlots = [];
 let currentAngle = 0;
 
-// ===== Supabase Setup =====
+// ===== Supabase REST API (no client library needed) =====
 const SUPABASE_URL = 'https://olcrqwjxgqcmdbljutbr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sY3Jxd2p4Z3FjbWRibGp1dGJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDQwMDMsImV4cCI6MjA4NzEyMDAwM30.23PBwPF0yap5vmU9x6sD0JFWd-kLtiHRcRGB3F0DCsI';
 const GAME_STATE_ID = 'margaux';
-
-let db = null;
-try {
-  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-} catch (e) {
-  console.warn('Supabase client failed to init, using localStorage only', e);
-}
+const API_BASE = SUPABASE_URL + '/rest/v1/game_state';
+const API_HEADERS = {
+  'apikey': SUPABASE_ANON_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+  'Content-Type': 'application/json',
+};
 
 // ===== State Persistence (Supabase + localStorage fallback) =====
 async function saveState() {
@@ -142,16 +141,19 @@ async function saveState() {
     wonPrizeIds: wonPrizes.map(p => p.id),
   }));
 
-  // Sync to Supabase
-  if (!db) return;
+  // Sync to Supabase via REST
   try {
-    const { error } = await db.from('game_state').upsert({
-      id: GAME_STATE_ID,
-      spins_left: spinsLeft,
-      won_prize_ids: wonPrizes.map(p => p.id),
-      updated_at: new Date().toISOString(),
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: { ...API_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({
+        id: GAME_STATE_ID,
+        spins_left: spinsLeft,
+        won_prize_ids: wonPrizes.map(p => p.id),
+        updated_at: new Date().toISOString(),
+      }),
     });
-    if (error) console.warn('Supabase save error:', error.message);
+    if (!res.ok) console.warn('Supabase save error:', res.status, await res.text());
   } catch (e) {
     console.warn('Supabase save failed, localStorage used as fallback', e);
   }
@@ -159,29 +161,27 @@ async function saveState() {
 
 async function loadState() {
   // Try Supabase first
-  if (db) {
-    try {
-      const { data, error } = await db
-        .from('game_state')
-        .select('*')
-        .eq('id', GAME_STATE_ID)
-        .single();
-
-      if (error) {
-        console.warn('Supabase load error:', error.message);
-      } else if (data) {
+  try {
+    const res = await fetch(API_BASE + '?id=eq.' + GAME_STATE_ID + '&select=*', {
+      headers: API_HEADERS,
+    });
+    if (res.ok) {
+      const rows = await res.json();
+      if (rows.length > 0) {
+        const data = rows[0];
         spinsLeft = data.spins_left;
         wonPrizes = (data.won_prize_ids || []).map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
-        // Keep localStorage in sync
         localStorage.setItem('margaux-spins', JSON.stringify({
           spinsLeft,
           wonPrizeIds: wonPrizes.map(p => p.id),
         }));
         return;
       }
-    } catch (e) {
-      console.warn('Supabase load failed, falling back to localStorage', e);
+    } else {
+      console.warn('Supabase load error:', res.status, await res.text());
     }
+  } catch (e) {
+    console.warn('Supabase load failed, falling back to localStorage', e);
   }
 
   // Fallback to localStorage
