@@ -145,12 +145,13 @@ async function saveState() {
   // Sync to Supabase
   if (!db) return;
   try {
-    await db.from('game_state').upsert({
+    const { error } = await db.from('game_state').upsert({
       id: GAME_STATE_ID,
       spins_left: spinsLeft,
       won_prize_ids: wonPrizes.map(p => p.id),
       updated_at: new Date().toISOString(),
     });
+    if (error) console.warn('Supabase save error:', error.message);
   } catch (e) {
     console.warn('Supabase save failed, localStorage used as fallback', e);
   }
@@ -166,7 +167,9 @@ async function loadState() {
         .eq('id', GAME_STATE_ID)
         .single();
 
-      if (data && !error) {
+      if (error) {
+        console.warn('Supabase load error:', error.message);
+      } else if (data) {
         spinsLeft = data.spins_left;
         wonPrizes = (data.won_prize_ids || []).map(id => PRIZES.find(p => p.id === id)).filter(Boolean);
         // Keep localStorage in sync
